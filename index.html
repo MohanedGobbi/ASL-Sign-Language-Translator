@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SignSpeak — ASL to Speech Translator</title>
+    <meta name="description" content="Real-time American Sign Language (ASL) alphabet translator. Show your hand to the webcam and watch it convert to text and speech instantly." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+
+      <!-- ── HEADER ── -->
+      <header id="header">
+        <div class="logo"></div>
+        <p class="tagline">ASL Fingerspelling → Text &amp; Speech · Powered by MediaPipe AI</p>
+        <div class="header-right">
+          <div class="fps-counter">
+            <span id="fps-display">-- fps</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ── MAIN ── -->
+      <main id="main">
+
+        <!-- ── CAMERA VIEW ── -->
+        <section id="camera-section">
+          <div id="camera-container">
+            <video id="video" playsinline autoplay muted></video>
+            <canvas id="canvas"></canvas>
+
+            <!-- Detected letter big overlay on camera -->
+            <div id="letter-overlay" class="hidden">
+              <div id="letter-display">
+                <span id="current-letter">?</span>
+                <div id="confidence-ring">
+                  <svg viewBox="0 0 80 80" class="ring-svg">
+                    <circle class="ring-bg" cx="40" cy="40" r="34" />
+                    <circle class="ring-fg" id="ring-circle" cx="40" cy="40" r="34"
+                      stroke-dasharray="213.6"
+                      stroke-dashoffset="213.6" />
+                  </svg>
+                  <span id="confidence-pct">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Word bar at bottom of camera -->
+            <div id="word-bar" class="hidden">
+              <span id="current-word-label">Current word:</span>
+              <span id="current-word-display"></span>
+              <span class="cursor-blink">|</span>
+            </div>
+
+            <!-- Start overlay -->
+            <div id="start-overlay">
+              <div class="overlay-content">
+                <h1>ASL Sign Language Translator</h1>
+                <p>Show your hand to the camera and sign ASL letters. The AI will read them and speak them aloud.</p>
+                <button id="start-btn" aria-label="Start camera and begin ASL translation">
+                  Start Translating
+                </button>
+                <div class="tech-badges">
+                  <span class="badge">A–Z Alphabet</span>
+                  <span class="badge">Real-time AI</span>
+                  <span class="badge">Text to Speech</span>
+                  <span class="badge">100% Local</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Loading overlay -->
+            <div id="loading-overlay" class="hidden">
+              <div class="loading-content">
+                <div class="spinner"></div>
+                <p class="loading-title">Loading AI Model…</p>
+                <p class="loading-sub" id="loading-status">Initialising camera…</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── RIGHT PANEL ── -->
+        <aside id="control-panel">
+
+          <!-- Status -->
+          <div class="panel-card" id="status-card">
+            <h2 class="panel-title">System</h2>
+            <div class="status-row">
+              <span class="status-label">Camera</span>
+              <span class="status-badge" id="cam-status">Off</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">AI Tracker</span>
+              <span class="status-badge" id="tracker-status">—</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Hands Detected</span>
+              <span class="status-value mono" id="hands-count">0</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Detected Letter</span>
+              <span class="status-value mono accent-text" id="detected-letter-small">—</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Confidence</span>
+              <span class="status-value mono" id="confidence-value">—</span>
+            </div>
+          </div>
+
+          <!-- Sentence Builder -->
+          <div class="panel-card" id="sentence-card">
+            <h2 class="panel-title">Translated Text</h2>
+            <div id="sentence-display"></div>
+            <div id="sentence-placeholder">Start signing to build words…</div>
+            <div class="sentence-controls">
+              <button id="speak-btn" class="action-btn speak-btn" disabled aria-label="Speak the translated text">
+                Speak
+              </button>
+              <button id="backspace-btn" class="action-btn" disabled aria-label="Delete last letter">
+                Backspace
+              </button>
+              <button id="space-btn" class="action-btn" disabled aria-label="Add a space">
+                Space
+              </button>
+              <button id="clear-btn" class="action-btn danger-btn" disabled aria-label="Clear all text">
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Alternatives -->
+          <div class="panel-card" id="alternatives-card">
+            <h2 class="panel-title">Top Matches</h2>
+            <div id="alternatives-list">
+              <div class="alt-item empty">Sign a letter to see matches</div>
+            </div>
+          </div>
+
+          <!-- Hold progress -->
+          <div class="panel-card" id="hold-card">
+            <h2 class="panel-title">Hold to Confirm</h2>
+            <p class="hold-hint">Hold a sign steady for <strong>0.8s</strong> to add the letter</p>
+            <div class="hold-bar-container">
+              <div class="hold-bar" id="hold-bar"></div>
+            </div>
+            <div class="hold-letter-preview" id="hold-letter-preview">—</div>
+          </div>
+
+          <!-- ASL Reference -->
+          <div class="panel-card guide-card">
+            <h2 class="panel-title">Quick Guide</h2>
+            <div class="guide-grid" id="guide-grid">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Stop -->
+          <button id="stop-btn" class="stop-btn hidden" aria-label="Stop camera">Stop</button>
+
+        </aside>
+      </main>
+
+      <!-- ── HISTORY BAR ── -->
+      <footer id="history-footer">
+        <span class="history-label">History:</span>
+        <div id="history-list">
+          <span class="history-empty">Words will appear here as you sign…</span>
+        </div>
+        <button id="speak-all-btn" class="mini-btn" disabled aria-label="Speak all history">Speak All</button>
+      </footer>
+
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
