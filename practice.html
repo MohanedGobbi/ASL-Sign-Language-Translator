@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SignSpeak — Practice ASL Fingerspelling</title>
+    <meta name="description" content="Learn the ASL alphabet by doing. SignSpeak shows you a letter — form the correct hand sign and hold it to score." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+
+      <!-- ── HEADER ── -->
+      <header id="header">
+        <div class="logo">Sign<span class="accent">Speak</span></div>
+        <p class="tagline">Learn ASL Fingerspelling · Powered by MediaPipe AI</p>
+        <nav class="page-nav" aria-label="Pages">
+          <a class="nav-tab" href="index.html">Home</a>
+          <a class="nav-tab" href="translate.html">Translate</a>
+          <a class="nav-tab active" href="practice.html">Practice</a>
+        </nav>
+        <div class="header-right">
+          <div class="fps-counter">
+            <span id="fps-display">-- fps</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ── MAIN ── -->
+      <main id="main">
+
+        <!-- ── CAMERA VIEW ── -->
+        <section id="camera-section">
+          <div id="camera-container">
+            <video id="video" playsinline autoplay muted></video>
+            <canvas id="canvas"></canvas>
+
+            <!-- Detected letter big overlay on camera -->
+            <div id="letter-overlay" class="hidden">
+              <div id="letter-display">
+                <span id="current-letter">?</span>
+                <div id="confidence-ring">
+                  <svg viewBox="0 0 80 80" class="ring-svg">
+                    <circle class="ring-bg" cx="40" cy="40" r="34" />
+                    <circle class="ring-fg" id="ring-circle" cx="40" cy="40" r="34"
+                      stroke-dasharray="213.6"
+                      stroke-dashoffset="213.6" />
+                  </svg>
+                  <span id="confidence-pct">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Start overlay -->
+            <div id="start-overlay">
+              <div class="overlay-content">
+                <h1>Practice ASL Fingerspelling</h1>
+                <p>The app shows you a letter — form the correct hand sign and hold it steady to score. Master the whole alphabet!</p>
+                <button id="start-btn" aria-label="Start camera and begin ASL practice">
+                  Start Practicing
+                </button>
+                <div class="tech-badges">
+                  <span class="badge">24 Letters</span>
+                  <span class="badge">Real-time AI</span>
+                  <span class="badge">Score &amp; Streak</span>
+                  <span class="badge">100% Local</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Loading overlay -->
+            <div id="loading-overlay" class="hidden">
+              <div class="loading-content">
+                <div class="spinner"></div>
+                <p class="loading-title">Loading AI Model…</p>
+                <p class="loading-sub" id="loading-status">Initialising camera…</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── RIGHT PANEL ── -->
+        <aside id="control-panel">
+
+          <!-- Practice: Target Letter -->
+          <div class="panel-card" id="practice-target-card">
+            <h2 class="panel-title">Sign This Letter</h2>
+            <div id="practice-target-display">
+              <span id="target-letter">?</span>
+              <span id="target-check" class="hidden">✓</span>
+            </div>
+            <p id="target-hint"></p>
+          </div>
+
+          <!-- Practice: Stats -->
+          <div class="panel-card" id="practice-stats-card">
+            <h2 class="panel-title">Your Progress</h2>
+            <div class="status-row">
+              <span class="status-label">Score</span>
+              <span class="status-value mono" id="practice-score">0</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Streak</span>
+              <span class="status-value mono" id="practice-streak">0</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Letters Mastered</span>
+              <span class="status-value mono" id="practice-completed">0 / 24</span>
+            </div>
+            <button id="skip-btn" class="action-btn" aria-label="Skip this letter">Skip Letter</button>
+          </div>
+
+          <!-- Status -->
+          <div class="panel-card" id="status-card">
+            <h2 class="panel-title">System</h2>
+            <div class="status-row">
+              <span class="status-label">Camera</span>
+              <span class="status-badge" id="cam-status">Off</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">AI Tracker</span>
+              <span class="status-badge" id="tracker-status">—</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Hands Detected</span>
+              <span class="status-value mono" id="hands-count">0</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Detected Letter</span>
+              <span class="status-value mono accent-text" id="detected-letter-small">—</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Confidence</span>
+              <span class="status-value mono" id="confidence-value">—</span>
+            </div>
+          </div>
+
+          <!-- Alternatives -->
+          <div class="panel-card" id="alternatives-card">
+            <h2 class="panel-title">Top Matches</h2>
+            <div id="alternatives-list">
+              <div class="alt-item empty">Sign a letter to see matches</div>
+            </div>
+          </div>
+
+          <!-- Hold progress -->
+          <div class="panel-card" id="hold-card">
+            <h2 class="panel-title">Hold to Confirm</h2>
+            <p class="hold-hint">Hold the correct sign steady for <strong>0.8s</strong> to score</p>
+            <div class="hold-bar-container">
+              <div class="hold-bar" id="hold-bar"></div>
+            </div>
+            <div class="hold-letter-preview" id="hold-letter-preview">—</div>
+          </div>
+
+          <!-- Practice: Alphabet Progress -->
+          <div class="panel-card guide-card">
+            <h2 class="panel-title">Alphabet Progress</h2>
+            <div class="guide-grid" id="practice-grid">
+              <!-- Populated by JS -->
+            </div>
+            <p class="practice-note">J &amp; Z require motion — not included.</p>
+          </div>
+
+          <!-- ASL Reference -->
+          <div class="panel-card guide-card">
+            <h2 class="panel-title">Quick Guide</h2>
+            <div class="guide-grid" id="guide-grid">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Stop -->
+          <button id="stop-btn" class="stop-btn hidden" aria-label="Stop camera">Stop</button>
+
+        </aside>
+      </main>
+
+    </div>
+    <script type="module" src="/src/practice.js"></script>
+  </body>
+</html>

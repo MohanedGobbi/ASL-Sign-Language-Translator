@@ -1,180 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scrollable">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SignSpeak — ASL to Speech Translator</title>
-    <meta name="description" content="Real-time American Sign Language (ASL) alphabet translator. Show your hand to the webcam and watch it convert to text and speech instantly." />
+    <title>SignSpeak — Learn & Translate ASL Fingerspelling</title>
+    <meta name="description" content="SignSpeak is a free, 100% local web platform for American Sign Language fingerspelling: translate signs to text & speech in real time, or learn the alphabet in practice mode." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <div id="app">
+    <div id="app" class="landing">
 
       <!-- ── HEADER ── -->
       <header id="header">
-        <div class="logo"></div>
-        <p class="tagline">ASL Fingerspelling → Text &amp; Speech · Powered by MediaPipe AI</p>
-        <div class="header-right">
-          <div class="fps-counter">
-            <span id="fps-display">-- fps</span>
-          </div>
-        </div>
+        <div class="logo">Sign<span class="accent">Speak</span></div>
+        <p class="tagline">Learn &amp; Translate ASL Fingerspelling · Powered by MediaPipe AI</p>
+        <nav class="page-nav" aria-label="Pages">
+          <a class="nav-tab active" href="index.html">Home</a>
+          <a class="nav-tab" href="translate.html">Translate</a>
+          <a class="nav-tab" href="practice.html">Practice</a>
+        </nav>
       </header>
 
-      <!-- ── MAIN ── -->
-      <main id="main">
+      <!-- ── LANDING ── -->
+      <main id="landing-main">
 
-        <!-- ── CAMERA VIEW ── -->
-        <section id="camera-section">
-          <div id="camera-container">
-            <video id="video" playsinline autoplay muted></video>
-            <canvas id="canvas"></canvas>
+        <!-- Hero -->
+        <section class="hero">
+          <h1>Sign language,<br />spoken by your browser.</h1>
+          <p class="hero-sub">
+            SignSpeak turns your webcam into an ASL fingerspelling companion.
+            Translate hand signs into text and speech in real time — or flip
+            around and let it teach you the alphabet, one sign at a time.
+            Everything runs locally; no video ever leaves your device.
+          </p>
+          <div class="hero-cta">
+            <a class="cta-btn cta-primary" href="translate.html">Start Translating →</a>
+            <a class="cta-btn cta-secondary" href="practice.html">Start Practicing →</a>
+          </div>
+          <div class="tech-badges">
+            <span class="badge">A–Z Alphabet</span>
+            <span class="badge">Real-time AI</span>
+            <span class="badge">Text to Speech</span>
+            <span class="badge">100% Local</span>
+          </div>
+        </section>
 
-            <!-- Detected letter big overlay on camera -->
-            <div id="letter-overlay" class="hidden">
-              <div id="letter-display">
-                <span id="current-letter">?</span>
-                <div id="confidence-ring">
-                  <svg viewBox="0 0 80 80" class="ring-svg">
-                    <circle class="ring-bg" cx="40" cy="40" r="34" />
-                    <circle class="ring-fg" id="ring-circle" cx="40" cy="40" r="34"
-                      stroke-dasharray="213.6"
-                      stroke-dashoffset="213.6" />
-                  </svg>
-                  <span id="confidence-pct">0%</span>
-                </div>
-              </div>
+        <!-- Two sections -->
+        <section class="mode-cards">
+          <a class="mode-card" href="translate.html">
+            <h2>Translate</h2>
+            <p>
+              Sign ASL letters to your camera and watch them become words and
+              sentences. Hold a sign steady to confirm it, build full sentences,
+              and have them read aloud with text-to-speech.
+            </p>
+            <span class="mode-card-link">Open the translator →</span>
+          </a>
+          <a class="mode-card mode-card-alt" href="practice.html">
+            <h2>Practice</h2>
+            <p>
+              Learn the ASL alphabet by doing. The app shows you a letter and a
+              hint — form the correct sign and hold it to score. Track your
+              streak and master all 24 static letters.
+            </p>
+            <span class="mode-card-link">Open practice mode →</span>
+          </a>
+        </section>
+
+        <!-- Features -->
+        <section class="landing-section">
+          <h2 class="landing-title">Features</h2>
+          <div class="feature-grid">
+            <div class="feature-card">
+              <h3>Real-Time Recognition</h3>
+              <p>Detects the full ASL alphabet (A–Z) frame-by-frame using MediaPipe hand tracking and geometric classification.</p>
             </div>
-
-            <!-- Word bar at bottom of camera -->
-            <div id="word-bar" class="hidden">
-              <span id="current-word-label">Current word:</span>
-              <span id="current-word-display"></span>
-              <span class="cursor-blink">|</span>
+            <div class="feature-card">
+              <h3>Hold-to-Confirm</h3>
+              <p>Hold a sign steady for 0.8s to confirm it — no accidental letters from transitional hand shapes.</p>
             </div>
-
-            <!-- Start overlay -->
-            <div id="start-overlay">
-              <div class="overlay-content">
-                <h1>ASL Sign Language Translator</h1>
-                <p>Show your hand to the camera and sign ASL letters. The AI will read them and speak them aloud.</p>
-                <button id="start-btn" aria-label="Start camera and begin ASL translation">
-                  Start Translating
-                </button>
-                <div class="tech-badges">
-                  <span class="badge">A–Z Alphabet</span>
-                  <span class="badge">Real-time AI</span>
-                  <span class="badge">Text to Speech</span>
-                  <span class="badge">100% Local</span>
-                </div>
-              </div>
+            <div class="feature-card">
+              <h3>Sentence Builder</h3>
+              <p>String letters into words, words into sentences, and browse your word history as you sign.</p>
             </div>
-
-            <!-- Loading overlay -->
-            <div id="loading-overlay" class="hidden">
-              <div class="loading-content">
-                <div class="spinner"></div>
-                <p class="loading-title">Loading AI Model…</p>
-                <p class="loading-sub" id="loading-status">Initialising camera…</p>
-              </div>
+            <div class="feature-card">
+              <h3>Text-to-Speech</h3>
+              <p>One click reads your translated sentence aloud using the browser's native Web Speech API.</p>
+            </div>
+            <div class="feature-card">
+              <h3>Guided Practice</h3>
+              <p>Target letters with form hints, live match feedback, score &amp; streak tracking, and an alphabet progress grid.</p>
+            </div>
+            <div class="feature-card">
+              <h3>100% Local</h3>
+              <p>All AI processing runs in your browser via WebAssembly. No video data is ever sent to a server.</p>
             </div>
           </div>
         </section>
 
-        <!-- ── RIGHT PANEL ── -->
-        <aside id="control-panel">
-
-          <!-- Status -->
-          <div class="panel-card" id="status-card">
-            <h2 class="panel-title">System</h2>
-            <div class="status-row">
-              <span class="status-label">Camera</span>
-              <span class="status-badge" id="cam-status">Off</span>
+        <!-- How it works -->
+        <section class="landing-section">
+          <h2 class="landing-title">How It Works</h2>
+          <div class="steps-grid">
+            <div class="step-card">
+              <span class="step-num">1</span>
+              <h3>Allow camera access</h3>
+              <p>Open Translate or Practice and grant webcam permission. The AI model loads in seconds.</p>
             </div>
-            <div class="status-row">
-              <span class="status-label">AI Tracker</span>
-              <span class="status-badge" id="tracker-status">—</span>
+            <div class="step-card">
+              <span class="step-num">2</span>
+              <h3>Show your hand</h3>
+              <p>MediaPipe tracks 21 hand landmarks per frame and the classifier scores every ASL letter shape.</p>
             </div>
-            <div class="status-row">
-              <span class="status-label">Hands Detected</span>
-              <span class="status-value mono" id="hands-count">0</span>
-            </div>
-            <div class="status-row">
-              <span class="status-label">Detected Letter</span>
-              <span class="status-value mono accent-text" id="detected-letter-small">—</span>
-            </div>
-            <div class="status-row">
-              <span class="status-label">Confidence</span>
-              <span class="status-value mono" id="confidence-value">—</span>
+            <div class="step-card">
+              <span class="step-num">3</span>
+              <h3>Hold to confirm</h3>
+              <p>Keep the sign steady for 0.8s. In Translate it's added to your sentence; in Practice it scores a point.</p>
             </div>
           </div>
+        </section>
 
-          <!-- Sentence Builder -->
-          <div class="panel-card" id="sentence-card">
-            <h2 class="panel-title">Translated Text</h2>
-            <div id="sentence-display"></div>
-            <div id="sentence-placeholder">Start signing to build words…</div>
-            <div class="sentence-controls">
-              <button id="speak-btn" class="action-btn speak-btn" disabled aria-label="Speak the translated text">
-                Speak
-              </button>
-              <button id="backspace-btn" class="action-btn" disabled aria-label="Delete last letter">
-                Backspace
-              </button>
-              <button id="space-btn" class="action-btn" disabled aria-label="Add a space">
-                Space
-              </button>
-              <button id="clear-btn" class="action-btn danger-btn" disabled aria-label="Clear all text">
-                Clear
-              </button>
-            </div>
+        <!-- Tech + notes -->
+        <section class="landing-section landing-cols">
+          <div class="landing-col">
+            <h2 class="landing-title">Tech Stack</h2>
+            <ul class="tech-list">
+              <li><strong>Hand Tracking</strong> — Google MediaPipe Tasks Vision (WebAssembly, GPU)</li>
+              <li><strong>Frontend</strong> — Vanilla HTML / CSS / JavaScript (ES Modules)</li>
+              <li><strong>Build Tool</strong> — Vite</li>
+              <li><strong>Audio</strong> — Web Speech API</li>
+            </ul>
           </div>
-
-          <!-- Alternatives -->
-          <div class="panel-card" id="alternatives-card">
-            <h2 class="panel-title">Top Matches</h2>
-            <div id="alternatives-list">
-              <div class="alt-item empty">Sign a letter to see matches</div>
-            </div>
+          <div class="landing-col">
+            <h2 class="landing-title">Accuracy Notes</h2>
+            <ul class="tech-list">
+              <li>Use a <strong>well-lit environment</strong> for optimal hand tracking.</li>
+              <li>Some letters look similar to the camera (U/V, M/N) — sign clearly and deliberately.</li>
+              <li><strong>J and Z</strong> require motion, so they are excluded from Practice mode.</li>
+            </ul>
           </div>
+        </section>
 
-          <!-- Hold progress -->
-          <div class="panel-card" id="hold-card">
-            <h2 class="panel-title">Hold to Confirm</h2>
-            <p class="hold-hint">Hold a sign steady for <strong>0.8s</strong> to add the letter</p>
-            <div class="hold-bar-container">
-              <div class="hold-bar" id="hold-bar"></div>
-            </div>
-            <div class="hold-letter-preview" id="hold-letter-preview">—</div>
-          </div>
-
-          <!-- ASL Reference -->
-          <div class="panel-card guide-card">
-            <h2 class="panel-title">Quick Guide</h2>
-            <div class="guide-grid" id="guide-grid">
-              <!-- Populated by JS -->
-            </div>
-          </div>
-
-          <!-- Stop -->
-          <button id="stop-btn" class="stop-btn hidden" aria-label="Stop camera">Stop</button>
-
-        </aside>
       </main>
 
-      <!-- ── HISTORY BAR ── -->
-      <footer id="history-footer">
-        <span class="history-label">History:</span>
-        <div id="history-list">
-          <span class="history-empty">Words will appear here as you sign…</span>
-        </div>
-        <button id="speak-all-btn" class="mini-btn" disabled aria-label="Speak all history">Speak All</button>
+      <!-- ── FOOTER ── -->
+      <footer id="landing-footer">
+        <span>SignSpeak — ASL Fingerspelling Platform · MIT License</span>
       </footer>
 
     </div>
-    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

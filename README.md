@@ -1,11 +1,17 @@
-# ASL Sign Language Translator
+# ASL Sign Language Translator & Practice
 
-A real-time American Sign Language (ASL) fingerspelling translator built as a modern web application. The application uses your webcam to detect hand gestures, translates them into text, and reads the translated sentences aloud using text-to-speech.
+A real-time American Sign Language (ASL) fingerspelling platform built as a modern web application. It has three pages:
+
+- **Home (Landing)** — project overview, features, and links to the two tools.
+- **Translate** — uses your webcam to detect hand gestures, translates them into text, and reads the translated sentences aloud using text-to-speech.
+- **Practice** — teaches you the ASL alphabet: the app shows a target letter and you must form the correct hand sign and hold it steady to score.
 
 ## Features
 
+- Three-Page Platform: a landing page plus dedicated Translate and Practice pages, linked from the header nav.
 - Real-Time ASL Alphabet Recognition: Detects the ASL alphabet (A-Z) using advanced computer vision.
-- Hold-to-Confirm: Hold a sign steady for a short duration (0.8s) to confirm and add the letter, preventing accidental inputs.
+- Hold-to-Confirm: Hold a sign steady for a short duration (0.8s) to confirm a letter, preventing accidental inputs.
+- Practice Mode: Random target letters with form hints, score/streak tracking, skip option, and an alphabet progress grid. (J and Z are excluded — they require motion.)
 - Word and Sentence Builder: String letters together to form words, and commit words to build full sentences.
 - Text-to-Speech Integration: Uses the browser's native Web Speech API to speak the translated text aloud.
 - 100% Local Processing: All AI tracking and processing runs locally in your browser for maximum privacy. No video data is sent to external servers.
@@ -29,17 +35,36 @@ A real-time American Sign Language (ASL) fingerspelling translator built as a mo
    ```bash
    npm run dev
    ```
-4. Open your browser and navigate to the local server address provided by Vite (usually http://localhost:5173).
+4. Open your browser and navigate to the local server address provided by Vite (usually http://localhost:5173). The landing page links to the Translate and Practice pages.
+
+## Project Structure
+
+```
+index.html        Landing page (project info)
+translate.html    Translator page  → src/translate.js
+practice.html     Practice page    → src/practice.js
+src/appShell.js   Shared camera/AI/UI shell used by both app pages
+src/translateMode.js / src/practiceMode.js   Per-page logic
+src/handTracker.js / src/aslClassifier.js / src/renderer.js   Shared AI + rendering
+```
 
 ## How to Use
 
-1. Click "Start Translating" and grant the browser permission to access your camera.
+### Translate Page
+1. Open "Translate" from the nav, click "Start Translating" and grant the browser permission to access your camera.
 2. Hold your hand in front of the camera and form an ASL letter shape.
 3. The AI will highlight your hand and display the detected letter and its confidence score.
 4. Hold the sign steady. A progress bar will fill up; once full, the letter is added to your current word.
 5. Click "Space" (or the spacebar button in the UI) to commit the word to the sentence.
 6. Click "Speak" to have the browser read your sentence aloud.
 7. Use the "Backspace" or "Clear" buttons to correct mistakes.
+
+### Practice Page
+1. Open "Practice" from the nav, then click "Start Practicing".
+2. A target letter is shown with a short hint describing the hand shape.
+3. Form the sign with your hand and hold it steady until the progress bar fills.
+4. A correct sign scores a point, grows your streak, and marks the letter as mastered in the Alphabet Progress grid.
+5. Use "Skip Letter" to move on (resets your streak).
 
 ## Accuracy Notes
 

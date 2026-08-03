@@ -388,6 +388,19 @@ const SCORERS = {
 
 export const ASL_ALPHABET = Object.keys(SCORERS); // A–Z
 
+/** Short human-readable hints describing how to form each letter. */
+export const LETTER_DESCRIPTIONS = {
+  A:'Fist+thumb side', B:'4 fingers up', C:'Curved C',
+  D:'Index up, O base', E:'Fingers hooked', F:'OK+3 up',
+  G:'Gun sideways', H:'2 sideways', I:'Pinky up',
+  J:'Pinky+J motion', K:'2+thumb up', L:'L-shape',
+  M:'3 over thumb', N:'2 over thumb', O:'O-shape',
+  P:'K pointing down', Q:'G pointing down', R:'Crossed 2',
+  S:'Fist+thumb front', T:'Thumb btw fingers', U:'2 together',
+  V:'Peace sign', W:'3 spread', X:'Index hooked',
+  Y:'Shaka', Z:'Index+Z motion',
+};
+
 /**
  * Classify ASL letter from MediaPipe hand landmarks.
  *
