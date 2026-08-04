@@ -893,16 +893,21 @@ body {
 }
 
 #target-image {
-  width: 130px;
-  height: 165px;
+  width: 160px;
+  height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--white);
+  border: var(--b);
+  border-radius: var(--r-sm);
+  padding: var(--sp-2);
 }
 
-#target-image svg {
-  width: 100%;
-  height: 100%;
+#target-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
   filter: drop-shadow(2px 2px 0 rgba(28, 41, 60, 0.15));
 }
 

@@ -72,7 +72,9 @@ export function createPracticeMode() {
     target = letter;
     targetLetter.textContent = target;
     targetHint.textContent   = LETTER_DESCRIPTIONS[target] || '';
-    targetImage.innerHTML    = LETTER_IMAGES[target] || '';
+    targetImage.innerHTML    = target
+      ? `<img src="${LETTER_IMAGES[target]}" alt="ASL hand sign for ${target}" class="target-hand-img">`
+      : '';
     targetCheck.classList.add('hidden');
 
     // Highlight the active target in the grid
