@@ -431,11 +431,8 @@ body {
   background: var(--surface-2);
 }
 
-#control-panel::-webkit-scrollbar { width: 4px; }
-#control-panel::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
-  border-radius: 2px;
-}
+#control-panel::-webkit-scrollbar { display: none; }
+#control-panel { scrollbar-width: none; }
 
 /* ── Cards ── */
 .panel-card {
@@ -949,6 +946,11 @@ html.scrollable,
 html.scrollable body {
   overflow: auto;
   height: auto;
+  scrollbar-width: none; /* Firefox */
+}
+html.scrollable::-webkit-scrollbar,
+html.scrollable body::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 #app.landing {
