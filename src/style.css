@@ -894,12 +894,22 @@ body {
 
 #target-image {
   width: 160px;
-  height: 174px; /* matches 234×254 cell aspect ratio */
-  background-repeat: no-repeat;
-  background-size: 500% 600%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
   border: var(--b);
   border-radius: var(--r-sm);
   box-shadow: var(--shadow-xs);
+  padding: var(--sp-2);
+  overflow: hidden;
+}
+
+#target-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
   filter: drop-shadow(2px 2px 0 rgba(28, 41, 60, 0.15));
 }
 

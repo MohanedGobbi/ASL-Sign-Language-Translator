@@ -9,7 +9,7 @@
  */
 
 import { ASL_ALPHABET, LETTER_DESCRIPTIONS } from './aslClassifier.js';
-import { LETTER_BG_POSITION, SPRITE_SHEET } from './aslImages.js';
+import { LETTER_IMAGES } from './aslImages.js';
 
 const $ = id => document.getElementById(id);
 
@@ -72,18 +72,9 @@ export function createPracticeMode() {
     target = letter;
     targetLetter.textContent = target;
     targetHint.textContent   = LETTER_DESCRIPTIONS[target] || '';
-
-    if (target && LETTER_BG_POSITION[target]) {
-      targetImage.style.backgroundImage = `url(${SPRITE_SHEET})`;
-      targetImage.style.backgroundPosition = LETTER_BG_POSITION[target];
-      targetImage.dataset.letter = target;
-      targetImage.setAttribute('aria-label', `ASL hand sign for ${target}`);
-    } else {
-      targetImage.style.backgroundImage = '';
-      targetImage.style.backgroundPosition = '';
-      targetImage.dataset.letter = '';
-      targetImage.removeAttribute('aria-label');
-    }
+    targetImage.innerHTML    = target
+      ? `<img src="${LETTER_IMAGES[target]}" alt="ASL hand sign for ${target}" class="target-hand-img">`
+      : '';
 
     targetCheck.classList.add('hidden');
 
