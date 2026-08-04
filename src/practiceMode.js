@@ -49,7 +49,7 @@ export function createPracticeMode() {
   // ── UI Helpers ──
   function buildGrid() {
     grid.innerHTML = POOL
-      .map(l => `<div class="guide-letter-item" id="practice-grid-${l}">${l}</div>`)
+      .map(l => `<div class="guide-letter-item" id="practice-grid-${l}" data-letter="${l}" title="Practice ${l}">${l}</div>`)
       .join('');
   }
 
@@ -66,17 +66,28 @@ export function createPracticeMode() {
     holdPreview.textContent = '—';
   }
 
+  function setTarget(letter) {
+    target = letter;
+    targetLetter.textContent = target;
+    targetHint.textContent   = LETTER_DESCRIPTIONS[target] || '';
+    targetCheck.classList.add('hidden');
+
+    // Highlight the active target in the grid
+    grid.querySelectorAll('.guide-letter-item.current').forEach(el =>
+      el.classList.remove('current')
+    );
+    $(`practice-grid-${target}`)?.classList.add('current');
+
+    resetHold();
+  }
+
   function nextTarget() {
     let next;
     do {
       next = POOL[Math.floor(Math.random() * POOL.length)];
     } while (next === target && POOL.length > 1);
 
-    target = next;
-    targetLetter.textContent = target;
-    targetHint.textContent   = LETTER_DESCRIPTIONS[target] || '';
-    targetCheck.classList.add('hidden');
-    resetHold();
+    setTarget(next);
   }
 
   function onCorrect() {
@@ -103,6 +114,16 @@ export function createPracticeMode() {
     streak = 0;
     updateStats();
     nextTarget();
+  });
+
+  // Click a letter in the grid to practice it directly
+  grid.addEventListener('click', e => {
+    const item = e.target.closest('.guide-letter-item');
+    if (!item || !POOL.includes(item.dataset.letter)) return;
+    if (item.dataset.letter === target) return;
+    streak = 0; // switching targets manually breaks the streak, same as Skip
+    updateStats();
+    setTarget(item.dataset.letter);
   });
 
   // ── Mode Interface ──

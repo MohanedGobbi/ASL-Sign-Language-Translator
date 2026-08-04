@@ -926,6 +926,21 @@ body {
   border-width: 2px;
 }
 
+/* Practice grid letters are clickable target pickers */
+#practice-grid .guide-letter-item {
+  cursor: pointer;
+}
+#practice-grid .guide-letter-item:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-xs);
+}
+#practice-grid .guide-letter-item.current {
+  background: var(--primary);
+  color: var(--text);
+  border-width: 2px;
+  box-shadow: var(--shadow-xs);
+}
+
 .practice-note {
   margin-top: var(--sp-2);
   font-size: var(--text-xs);
