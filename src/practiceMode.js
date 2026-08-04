@@ -9,6 +9,7 @@
  */
 
 import { ASL_ALPHABET, LETTER_DESCRIPTIONS } from './aslClassifier.js';
+import { LETTER_IMAGES } from './aslImages.js';
 
 const $ = id => document.getElementById(id);
 
@@ -23,6 +24,7 @@ const POOL = ASL_ALPHABET.filter(l => l !== 'J' && l !== 'Z');
 export function createPracticeMode() {
   // ── DOM References ──
   const targetDisplay = $('practice-target-display');
+  const targetImage   = $('target-image');
   const targetLetter  = $('target-letter');
   const targetCheck   = $('target-check');
   const targetHint    = $('target-hint');
@@ -70,6 +72,7 @@ export function createPracticeMode() {
     target = letter;
     targetLetter.textContent = target;
     targetHint.textContent   = LETTER_DESCRIPTIONS[target] || '';
+    targetImage.innerHTML    = LETTER_IMAGES[target] || '';
     targetCheck.classList.add('hidden');
 
     // Highlight the active target in the grid
