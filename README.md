@@ -6,6 +6,14 @@ A real-time American Sign Language (ASL) fingerspelling platform built as a mode
 - **Translate** — uses your webcam to detect hand gestures, translates them into text, and reads the translated sentences aloud using text-to-speech.
 - **Practice** — teaches you the ASL alphabet: the app shows a target letter and you must form the correct hand sign and hold it steady to score.
 
+## Screenshots
+
+<table>
+<tr><td align="center" width="50%"><img src="screenshots/SpeakSign_01_Landing.png" width="420"><br/><sub>Landing</sub></td><td align="center" width="50%"><img src="screenshots/SpeakSign_02_Translate.png" width="420"><br/><sub>Translate</sub></td></tr>
+<tr><td align="center" width="50%"><img src="screenshots/SpeakSign_03_Practice.png" width="420"><br/><sub>Practice</sub></td><td></td></tr>
+</table>
+
+
 ## Features
 
 - Three-Page Platform: a landing page plus dedicated Translate and Practice pages, linked from the header nav.
